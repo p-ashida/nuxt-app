@@ -1,38 +1,48 @@
-<!-- <template>
-  <div>
-    <NuxtRouteAnnouncer />
-    <NuxtWelcome />
-  </div>
-</template> -->
 <template>
   <div class="calendar" @click="flipDate">
-    <div class="date-display" :class="{ flipped: isFlipped.value }">{{ displayDate }}</div>
+    <div class="date-display" :class="{ flipped: isFlipped }">{{ displayDate }}</div>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ref, computed } from 'vue';
 
 export default {
   setup() {
-    const currentDate = ref(new Date());
-    const isFlipped = ref(false);
+    // 現在の日付を保持するリアクティブな変数
+    const currentDate = ref<Date>(new Date());
+    // アニメーションの状態を保持するリアクティブな変数
+    const isFlipped = ref<boolean>(false);
 
-    const displayDate = computed(() => currentDate.value.toLocaleDateString());
+    // 現在の日付をローカル形式で表示する計算プロパティ
+    const displayDate = computed<string>(() => currentDate.value.toLocaleDateString());
 
-    const flipDate = () => {
+    // 日付を進める関数
+    const flipDate = (): void => {
       isFlipped.value = !isFlipped.value; // アニメーション開始
       setTimeout(() => {
-        const today = currentDate.value.getDate();
-        const lastDayOfMonth = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() + 1, 0).getDate();
+        const today: number = currentDate.value.getDate();
+        const lastDayOfMonth: number = new Date(
+          currentDate.value.getFullYear(),
+          currentDate.value.getMonth() + 1,
+          0
+        ).getDate();
 
         // 月末かどうかをチェック
         if (today === lastDayOfMonth) {
           // 翌月の1日にリセット
-          currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() + 1, 1);
+          currentDate.value = new Date(
+            currentDate.value.getFullYear(),
+            currentDate.value.getMonth() + 1,
+            1
+          );
         } else {
           // 翌日に進める（新しい Date オブジェクトを作成）
-          currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth(), today + 1);
+          currentDate.value = new Date(
+            currentDate.value.getFullYear(),
+            currentDate.value.getMonth(),
+            today + 1
+          );
         }
 
         isFlipped.value = false; // アニメーション終了
