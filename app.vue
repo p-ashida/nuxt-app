@@ -3,7 +3,9 @@
     <div class="date-display" :class="{ flipped: isFlipped }">
       {{ displayDate }}
     </div>
-    <button class="holiday-button" @click="goToNextHoliday">次の祝日へ</button>
+    <button class="holiday-button" @click.stop="goToNextHoliday">
+      次の祝日へ
+    </button>
   </div>
 </template>
 
@@ -30,7 +32,9 @@ export default {
         const response = await fetch("http://api.national-holidays.jp/2025"); // 実際のAPIエンドポイントに置き換えてください
         const data = await response.json();
         console.log("祝日データ:", data);
-        holidays.value = data.map((holiday: { date: string | number | Date; }) => new Date(holiday.date)); // APIから取得した日付をDateオブジェクトに変換
+        holidays.value = data.map(
+          (holiday: { date: string | number | Date }) => new Date(holiday.date)
+        ); // APIから取得した日付をDateオブジェクトに変換
       } catch (error) {
         console.error("祝日の取得に失敗しました:", error);
       }
@@ -38,6 +42,7 @@ export default {
 
     // 日付を進める関数
     const flipDate = (): void => {
+      console.log("flipDateが呼ばれました");
       isFlipped.value = true; // アニメーション開始
       setTimeout(() => {
         const today = currentDate.value.getDate();
@@ -70,13 +75,17 @@ export default {
 
     // 次の祝日に移動する関数
     const goToNextHoliday = (): void => {
-      const today = currentDate.value;
-      const nextHoliday = holidays.value.find((holiday) => holiday > today);
-      if (nextHoliday) {
-        currentDate.value = nextHoliday; // 次の祝日に変更
-      } else {
-        alert("今年の祝日はもうありません！");
-      }
+      isFlipped.value = true; // アニメーション開始
+      setTimeout(() => {
+        const today = currentDate.value;
+        const nextHoliday = holidays.value.find((holiday) => holiday > today);
+        if (nextHoliday) {
+          currentDate.value = nextHoliday; // 次の祝日に変更
+        } else {
+          alert("今年の祝日はもうありません！");
+        }
+        isFlipped.value = false; // アニメーション終了
+      }, 500); // アニメーションの長さに合わせて調整
     };
 
     // コンポーネントがマウントされたときに祝日を取得
