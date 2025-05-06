@@ -1,11 +1,13 @@
 <template>
   <div class="calendar" @click="flipDate">
-    <div class="date-display" :class="{ flipped: isFlipped }">{{ displayDate }}</div>
+    <div class="date-display" :class="{ flipped: isFlipped }">
+      {{ displayDate }}
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 
 export default {
   setup() {
@@ -15,14 +17,16 @@ export default {
     const isFlipped = ref<boolean>(false);
 
     // 現在の日付をローカル形式で表示する計算プロパティ
-    const displayDate = computed<string>(() => currentDate.value.toLocaleDateString());
+    const displayDate = computed<string>(() =>
+      currentDate.value.toLocaleDateString()
+    );
 
     // 日付を進める関数
     const flipDate = (): void => {
-      isFlipped.value = !isFlipped.value; // アニメーション開始
+      isFlipped.value = true; // アニメーション開始
       setTimeout(() => {
-        const today: number = currentDate.value.getDate();
-        const lastDayOfMonth: number = new Date(
+        const today = currentDate.value.getDate();
+        const lastDayOfMonth = new Date(
           currentDate.value.getFullYear(),
           currentDate.value.getMonth() + 1,
           0
@@ -37,7 +41,7 @@ export default {
             1
           );
         } else {
-          // 翌日に進める（新しい Date オブジェクトを作成）
+          // 翌日に進める
           currentDate.value = new Date(
             currentDate.value.getFullYear(),
             currentDate.value.getMonth(),
@@ -46,27 +50,35 @@ export default {
         }
 
         isFlipped.value = false; // アニメーション終了
-      }, 500); // 500msはアニメーションの長さに合わせて調整
+      }, 500); // アニメーションの長さに合わせて調整
     };
 
     return {
       currentDate,
       isFlipped,
       displayDate,
-      flipDate
+      flipDate,
     };
-  }
+  },
 };
 </script>
 
 <style scoped>
 .calendar {
   cursor: pointer;
-  /* カレンダーのスタイル */
+  text-align: center;
+  margin: 20px;
 }
+
 .date-display {
+  font-size: 2rem;
+  padding: 20px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 10px;
   transition: transform 0.5s ease-in-out;
 }
+
 .date-display.flipped {
   transform: rotateX(180deg); /* カレンダーがめくれるような回転アニメーション */
 }
